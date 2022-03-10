@@ -1,0 +1,77 @@
+{
+  "project_info": {
+    "project_number": "854297730634",
+    "firebase_url": "https://housetick-2021-default-rtdb.firebaseio.com",
+    "project_id": "housetick-2021",
+    "storage_bucket": "housetick-2021.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:854297730634:android:938600a2b3fbd7434910b3",
+        "android_client_info": {
+          "package_name": "com.demo.thenews"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "854297730634-cthdod81ffosqeqtn6rfnotto71tigo6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.demo.thenews",
+            "certificate_hash": "5d2c98baec620dc9bceb7b63f1110a2f6c379342"
+          }
+        },
+        {
+          "client_id": "854297730634-h1pe4tdj57c4ju0m7cqiob5lanmv5e89.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBBvz-flJ736HlbaOZ6tErbiLKl3tRFzPQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "854297730634-h1pe4tdj57c4ju0m7cqiob5lanmv5e89.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:854297730634:android:041f93a64af8ee2e4910b3",
+        "android_client_info": {
+          "package_name": "com.rion.spy"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "854297730634-h1pe4tdj57c4ju0m7cqiob5lanmv5e89.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBBvz-flJ736HlbaOZ6tErbiLKl3tRFzPQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "854297730634-h1pe4tdj57c4ju0m7cqiob5lanmv5e89.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

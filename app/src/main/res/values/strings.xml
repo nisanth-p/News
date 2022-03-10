@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">TheNews</string>
+    <string name="logout">logout</string>
+    <string name="textOk">OK</string>
+    <string name="textYes">Yes</string>
+    <string name="textNo">No</string>
+    <string name="textApply">Apply</string>
+    <string name="textCancel">Cancel</string>
+    <string name="textClose">Close</string>
+</resources>
