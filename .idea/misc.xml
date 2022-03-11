@@ -7,14 +7,19 @@
         <entry key="..\:/AndroidWorkspace/TestWorkspace/TheNews/app/src/main/res/drawable/ic_baseline_contact_phone_24.xml" value="0.1585" />
         <entry key="..\:/AndroidWorkspace/TestWorkspace/TheNews/app/src/main/res/drawable/ic_baseline_lock_24.xml" value="0.147" />
         <entry key="..\:/AndroidWorkspace/TestWorkspace/TheNews/app/src/main/res/drawable/ic_baseline_search_24.xml" value="0.1175" />
+        <entry key="..\:/AndroidWorkspace/TestWorkspace/TheNews/app/src/main/res/drawable/ic_circle.xml" value="0.1575" />
         <entry key="..\:/AndroidWorkspace/TestWorkspace/TheNews/app/src/main/res/drawable/ic_outline_contact_mail_24.xml" value="0.1585" />
         <entry key="..\:/AndroidWorkspace/TestWorkspace/TheNews/app/src/main/res/drawable/ic_round_back_arrow.xml" value="0.1175" />
         <entry key="..\:/AndroidWorkspace/TestWorkspace/TheNews/app/src/main/res/font/font.xml" value="0.28307692307692306" />
-        <entry key="..\:/AndroidWorkspace/TestWorkspace/TheNews/app/src/main/res/layout/activity_main.xml" value="0.12916666666666668" />
+        <entry key="..\:/AndroidWorkspace/TestWorkspace/TheNews/app/src/main/res/layout/activity_main.xml" value="0.1" />
+        <entry key="..\:/AndroidWorkspace/TestWorkspace/TheNews/app/src/main/res/layout/fragment_home.xml" value="0.25" />
         <entry key="..\:/AndroidWorkspace/TestWorkspace/TheNews/app/src/main/res/layout/fragment_signin.xml" value="0.25729166666666664" />
         <entry key="..\:/AndroidWorkspace/TestWorkspace/TheNews/app/src/main/res/layout/fragment_splash.xml" value="0.25729166666666664" />
         <entry key="..\:/AndroidWorkspace/TestWorkspace/TheNews/app/src/main/res/layout/home_fragment.xml" value="0.14895833333333333" />
         <entry key="..\:/AndroidWorkspace/TestWorkspace/TheNews/app/src/main/res/layout/layout_empty_box_msg.xml" value="0.25729166666666664" />
+        <entry key="..\:/AndroidWorkspace/TestWorkspace/TheNews/app/src/main/res/layout/nav_drawer_header.xml" value="0.25" />
+        <entry key="..\:/AndroidWorkspace/TestWorkspace/TheNews/app/src/main/res/menu/menu_bottom_navigation.xml" value="0.14791666666666667" />
+        <entry key="..\:/AndroidWorkspace/TestWorkspace/TheNews/app/src/main/res/menu/menu_drawer_navigation.xml" value="0.10625" />
       </map>
     </option>
   </component>

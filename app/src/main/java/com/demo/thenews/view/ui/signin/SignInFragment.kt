@@ -41,6 +41,7 @@ import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import timber.log.Timber
+import java.util.regex.Pattern
 import kotlin.coroutines.CoroutineContext
 import kotlin.properties.Delegates
 
@@ -101,6 +102,7 @@ class SignInFragment : BaseFragment<FragmentSigninBinding>(), CoroutineScope,
                     globalLoaderLaunch = launch(coroutineContext) {
                         _viewBinding!!.lazyLoad.visibility = View.VISIBLE
                     }
+
                     if (mapSigninData[ReqMapKey.mail]?.isNotEmpty() == true &&
                         mapSigninData[ReqMapKey.mail]?.isNotBlank() == true &&
                         mapSigninData[ReqMapKey.password]?.isNotBlank() == true &&
@@ -118,6 +120,11 @@ class SignInFragment : BaseFragment<FragmentSigninBinding>(), CoroutineScope,
                                user_password = mapSigninData[ReqMapKey.password]!!
                            )
 
+                    }
+                    if (!isValidEmailAddress(mapSigninData[ReqMapKey.mail].toString())){
+                        _viewBinding!!.TILEmail.error = "Invalid mailId"
+                        _viewBinding!!.TILEmail.isFocusable = true
+                        return@launch
                     }
                     if (mapSigninData[ReqMapKey.mail].isNullOrEmpty()) {
                         _viewBinding!!.TILEmail.error = "Mail id needed"
@@ -199,7 +206,7 @@ class SignInFragment : BaseFragment<FragmentSigninBinding>(), CoroutineScope,
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w(TAG, "signInWithCredential:failure", task.exception)
-                    // updateUI(null)
+
                 }
             }
     }
@@ -385,6 +392,7 @@ class SignInFragment : BaseFragment<FragmentSigninBinding>(), CoroutineScope,
         }
         _viewBinding!!.TIEMailid.addTextChangedListener {
             tie_mailObs.value = it.toString()
+
             sharedModel.sharedPref.put(SharedPrefKey.APP_USERMAIL, it.toString())
             if (it.toString().length >= 5) {
                 _viewBinding!!.TILEmail.isFocusable = true
@@ -462,6 +470,16 @@ class SignInFragment : BaseFragment<FragmentSigninBinding>(), CoroutineScope,
         viewModel.bt_signin_.observe(this) {
             _viewBinding!!.tvSignin.text = it.toString()
         }
+    }
+    private fun isValidEmailAddress(emailOrMobile: String): Boolean {
+
+        val emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\." +
+                "[a-zA-Z0-9_+&*-]+)*@" +
+                "(?:[a-zA-Z0-9-]+\\.)+[a-z" +
+                "A-Z]{2,7}$"
+
+        val pat = Pattern.compile(emailRegex)
+        return pat.matcher(emailOrMobile).matches()
     }
 
     override fun layoutRes(): Int = R.layout.fragment_signin
