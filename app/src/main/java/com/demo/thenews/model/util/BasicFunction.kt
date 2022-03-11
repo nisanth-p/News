@@ -1,6 +1,7 @@
 package com.demo.thenews.model.util
 
 import android.content.Context
+import com.demo.thenews.R
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
@@ -57,10 +58,12 @@ class BasicFunction @Inject constructor(context: Context?) {
     companion object Screens {
         private var scr = hashMapOf<String, Any>()
         fun getScreens(): HashMap<String, Any> {
-/*            scr["splash_to_splash"] = R.id.action_splashFragment_self
-            scr["splash_to_select_screen"] = R.id.action_splashFragment_to_selectScreenFragment
-            scr["splash_to_add_rooms"] = R.id.action_splashFragment_to_addRoomFragment
 
+
+            scr["splash_to_signin"] = R.id.action_splashFragment_to_signInFragment
+            scr["signin_to_signin"] = R.id.action_signInFragment_self
+           /* scr["splash_to_select_screen"] = R.id.action_splashFragment_to_selectScreenFragment
+            scr["splash_to_add_rooms"] = R.id.action_splashFragment_to_addRoomFragment
             scr["select_screen_to_signin"] = R.id.action_selectScreenFragment_to_signInFragment
             scr["select_screen_to_signup"] = R.id.action_selectScreenFragment_to_signUpFragment
 

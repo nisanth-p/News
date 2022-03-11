@@ -27,13 +27,8 @@ class SplashFragment : BaseFragment<FragmentSplashBinding>() {
         _viewBinding = binding
         viewModel.init {
             when (it) {
-                TypeOfData.INT -> {
-                    BasicFunction.getScreens()["splash.nextPage"]
-                }
-                else -> {
-
-                    error("Screen Not Available")
-                }
+                TypeOfData.INT ->  nav(BasicFunction.getScreens()["splash_to_signin"] as Int)
+                else ->  error("Screen Not Available")
             }
         }
 

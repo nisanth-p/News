@@ -1,19 +1,15 @@
 package com.demo.thenews.view.ui.signin
 
+import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.ViewGroup
-import androidx.core.content.ContextCompat
-import com.google.android.material.textfield.TextInputLayout
-import com.demo.thenews.view.ui.splash.TypeOfData
-import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.*
-import kotlin.coroutines.CoroutineContext
-import kotlin.properties.Delegates
-import android.text.style.UnderlineSpan
 import android.text.SpannableString
+import android.text.style.UnderlineSpan
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
@@ -26,14 +22,38 @@ import com.demo.thenews.model.util.ReqMapKey
 import com.demo.thenews.model.util.SharedPrefKey
 import com.demo.thenews.model.util.responsehelper.Status
 import com.demo.thenews.view.base.BaseFragment
+import com.demo.thenews.view.ui.splash.TypeOfData
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.ConnectionResult
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.common.api.GoogleApiClient
+import com.google.android.gms.tasks.Task
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.textfield.TextInputLayout
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuth.AuthStateListener
+import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.*
+import kotlin.coroutines.CoroutineContext
+import kotlin.properties.Delegates
 
 
 private const val TAG = "xxSignInFragment"
 
 @DelicateCoroutinesApi
 @AndroidEntryPoint
-class SignInFragment : BaseFragment<FragmentSigninBinding>(), CoroutineScope {
+class SignInFragment : BaseFragment<FragmentSigninBinding>(), CoroutineScope,
+    GoogleApiClient.OnConnectionFailedListener {
+    private lateinit var googleApiClient: GoogleApiClient
+    private lateinit var firebaseAuth: FirebaseAuth
+    private lateinit var googleSignInClient: GoogleSignInClient
+    private var authStateListener: AuthStateListener? = null
     private var tie_mailObs: MutableLiveData<String> = MutableLiveData()
     val tie_mailObs_: LiveData<String> = tie_mailObs
 
@@ -50,14 +70,14 @@ class SignInFragment : BaseFragment<FragmentSigninBinding>(), CoroutineScope {
     val viewModel by viewModels<SignInViewModel>()
     override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentSigninBinding
         get() = FragmentSigninBinding::inflate
-
+    private val GOOGLE_SIGN_IN = 1998
     override fun setup() {
         _viewBinding = binding
 
         viewModel.init {
             when (it) {
                 TypeOfData.INT -> {
-                   nextScreenId =
+                    nextScreenId =
                         BasicFunction.getScreens()["signin.nextPage"] as Int
                     previousScreenId =
                         BasicFunction.getScreens()["signin.previousPage"] as Int
@@ -72,18 +92,21 @@ class SignInFragment : BaseFragment<FragmentSigninBinding>(), CoroutineScope {
     }
 
     private fun onClickListeners() {
+        // Configure Google Sign In
+        googleSignInOption()
         _viewBinding!!.tvSignin.setOnClickListener {
             Log.d(TAG, "onClickListeners: nextScreenId =$nextScreenId")
 
             globalLaunch = GlobalScope.launch(Dispatchers.Main) {
-               launch {
+                launch {
                     globalLoaderLaunch = launch(coroutineContext) {
                         _viewBinding!!.lazyLoad.visibility = View.VISIBLE
                     }
                     if (mapSigninData[ReqMapKey.mail]?.isNotEmpty() == true &&
                         mapSigninData[ReqMapKey.mail]?.isNotBlank() == true &&
                         mapSigninData[ReqMapKey.password]?.isNotBlank() == true &&
-                        mapSigninData[ReqMapKey.password]?.isNotEmpty() == true) {
+                        mapSigninData[ReqMapKey.password]?.isNotEmpty() == true
+                    ) {
                         _viewBinding!!.TILEmail.isFocusable = false
                         _viewBinding!!.TILPassword.isFocusable = false
                         _viewBinding!!.tvSignin.isClickable = false
@@ -91,10 +114,11 @@ class SignInFragment : BaseFragment<FragmentSigninBinding>(), CoroutineScope {
 
                         _viewBinding!!.TILEmail.error = null
                         _viewBinding!!.TILPassword.error = null
-                        viewModel.postLogin(
-                            user_email = mapSigninData[ReqMapKey.mail]!!,
-                            user_password = mapSigninData[ReqMapKey.password]!!
-                        )
+                        /*   viewModel.postLogin(
+                               user_email = mapSigninData[ReqMapKey.mail]!!,
+                               user_password = mapSigninData[ReqMapKey.password]!!
+                           )*/
+
                     }
                     if (mapSigninData[ReqMapKey.mail].isNullOrEmpty()) {
                         _viewBinding!!.TILEmail.error = "Mail id needed"
@@ -116,6 +140,90 @@ class SignInFragment : BaseFragment<FragmentSigninBinding>(), CoroutineScope {
         }
     }
 
+
+    private fun googleSignInOption() {
+        firebaseAuth = FirebaseAuth.getInstance();
+        authStateListener = AuthStateListener {
+            val user = firebaseAuth.currentUser
+            if (user != null) {
+                // User is signed in
+                //logic to save the user details to Firebase
+                Log.d(TAG, "onAuthStateChanged:signed_in:" + user.uid)
+            } else {
+                // User is signed out
+                Log.d(TAG, "onAuthStateChanged:signed_out")
+            }
+        }
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(getString(R.string.web_client_id))
+            .requestEmail()
+            .build()
+        googleSignInClient = GoogleSignIn.getClient(requireActivity(), gso)
+        _viewBinding!!.signInButton.setOnClickListener {
+            //  val intent = Auth.GoogleSignInApi.getSignInIntent(googleSignInClient)
+            val intent = googleSignInClient.signInIntent;
+            startActivityForResult(intent, GOOGLE_SIGN_IN)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == GOOGLE_SIGN_IN) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+            try {
+                // Google Sign In was successful, authenticate with Firebase
+                val account = task.getResult(ApiException::class.java)!!
+                Log.d(TAG, "firebaseAuthWithGoogle:" + account.id)
+                handleSignInResult(task)
+            } catch (e: ApiException) {
+                // Google Sign In failed, update UI appropriately
+                Log.w(TAG, "Google sign in failed", e)
+            }
+        }
+    }
+
+    private fun firebaseAuthWithGoogle(idToken: String) {
+        val credential = GoogleAuthProvider.getCredential(idToken, null)
+        firebaseAuth.signInWithCredential(credential)
+            .addOnCompleteListener(requireActivity()) { task ->
+                if (task.isSuccessful) {
+                    Log.d(TAG, "signInWithCredential:success")
+                    val user = firebaseAuth.currentUser
+                    val idToken = idToken
+                    val name = user?.displayName
+                    val email = user?.email
+                   sharedModel.sharedPref.put(SharedPrefKey.APP_USERMAIL,email as String)
+                   sharedModel.sharedPref.put(SharedPrefKey.APP_USERNAME,name as String)
+                   sharedModel.sharedPref.put(SharedPrefKey.APP_USERID, idToken)
+                    //nav()
+                } else {
+                    // If sign in fails, display a message to the user.
+                    Log.w(TAG, "signInWithCredential:failure", task.exception)
+                    // updateUI(null)
+                }
+            }
+    }
+
+    private fun handleSignInResult(result: Task<GoogleSignInAccount>) {
+        if (result.isSuccessful) {
+            val account: GoogleSignInAccount = result.result
+            account.idToken?.let { firebaseAuthWithGoogle(it) }
+        } else {
+            // Google Sign In failed, update UI appropriately
+            Log.e(TAG, "Login Unsuccessful. $result")
+            Toast.makeText(requireContext(), "Login Unsuccessful", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        if (GoogleSignIn.getLastSignedInAccount(requireActivity()) != null) {
+            // nav()
+        }
+    }
+    private fun signOut() {
+        Firebase.auth.signOut()
+    }
     private fun bindViews() {
         if (DebugMode.isDebug(requireContext())) {
             _viewBinding!!.TIEMailid.setText("abiletechopensource@gmail.com")
@@ -154,10 +262,12 @@ class SignInFragment : BaseFragment<FragmentSigninBinding>(), CoroutineScope {
                                 "SUCCESS", {
                                     res.data?.filter { dataItem ->
                                         dataItem?.userAdminid?.let { userid ->
-                                            if (!userid.isEmpty()) { }
+                                            if (!userid.isEmpty()) {
+                                            }
                                         }
                                         dataItem?.userPhone?.let { userphone ->
-                                            if (!userphone.isEmpty()) {  }
+                                            if (!userphone.isEmpty()) {
+                                            }
                                         }
 
                                         true
@@ -416,6 +526,10 @@ class SignInFragment : BaseFragment<FragmentSigninBinding>(), CoroutineScope {
 
     override fun onDestroy() {
         super.onDestroy()
+    }
+
+    override fun onConnectionFailed(p0: ConnectionResult) {
+        TODO("Not yet implemented")
     }
 
 }

@@ -7,4 +7,11 @@
     <string name="textApply">Apply</string>
     <string name="textCancel">Cancel</string>
     <string name="textClose">Close</string>
+    <string name="signin">Signin</string>
+    <string name="enter_email">Enter Email</string>
+    <string name="forget_password">Forget Password</string>
+    <string name="cient_id">854297730634-c4tmbghnhoup4e1alt0qqb2m81irfmib.apps.googleusercontent.com</string>
+    <string name="client_secret">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</string>
+    <string name="web_client_id">854297730634-h1pe4tdj57c4ju0m7cqiob5lanmv5e89.apps.googleusercontent.com</string>
+
 </resources>

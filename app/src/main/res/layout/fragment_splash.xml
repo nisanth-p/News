@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="?attr/fullscreenBackgroundColor"
-    android:theme="@style/Widget.Material3.MaterialCalendar.Fullscreen"
+    android:theme="@style/ThemeOverlay.News.FullscreenContainer"
     tools:context=".view.ui.splash.SplashFragment">
     <!-- The primary full-screen view. This can be replaced with whatever view
          is needed to present your content, e.g. VideoView, SurfaceView,
@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:keepScreenOn="true"
-            android:text="RION"
+            android:text="The News"
             android:textColor="?attr/fullscreenTextColor"
             android:textSize="50sp"
             android:textStyle="bold"

@@ -31,7 +31,7 @@ class SplashViewModel @Inject constructor(
     private val SPLASH_TIME_OUT: Long = 3000 // 1 sec
     fun init(function: (TypeOfData) -> Unit) {
         Handler(Looper.getMainLooper()).postDelayed({
-                when (BasicFunction.getScreens()["splash.nextPage"]) {
+                when (BasicFunction.getScreens()["splash_to_signin"]) {
                     is Int -> {
                         function(TypeOfData.INT)
                     }

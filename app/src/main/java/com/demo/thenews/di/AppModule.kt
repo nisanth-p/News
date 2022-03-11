@@ -69,9 +69,7 @@ object AppModule {
     @Qualifier
     @Retention(AnnotationRetention.RUNTIME)
     annotation class RemoteDataSource
-    @Qualifier
-    @Retention(AnnotationRetention.RUNTIME)
-    annotation class LocalDataSource
+
 
     @Singleton
     @RemoteDataSource
@@ -145,12 +143,12 @@ object AppModule {
     @Singleton
     @Provides
     fun provideDefaultRepository(
-        @AppModule.LocalDataSource local: CommonDataSource,
+
         @AppModule.RemoteDataSource remote: CommonDataSource,
         apiHelper: ApiHelper,
         ioDispatcher: CoroutineDispatcher
     ): CommonRepository {
-        return DefaultRepository(local, remote, apiHelper, ioDispatcher)
+        return DefaultRepository( remote, apiHelper, ioDispatcher)
     }
 
     @Provides

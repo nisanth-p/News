@@ -52,6 +52,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "854297730634-7qplfrbcjc30pcfjg9ibsdcs2bgamral.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rion.spy",
+            "certificate_hash": "5d2c98baec620dc9bceb7b63f1110a2f6c379342"
+          }
+        },
+        {
           "client_id": "854297730634-h1pe4tdj57c4ju0m7cqiob5lanmv5e89.apps.googleusercontent.com",
           "client_type": 3
         }

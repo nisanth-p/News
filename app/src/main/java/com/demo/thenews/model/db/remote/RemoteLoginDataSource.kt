@@ -6,11 +6,12 @@ import com.demo.thenews.model.db.api.ApiService
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import retrofit2.Response
+import javax.inject.Inject
 
 private const val TAG = "xxxRemoteLoginDataSource"
 
 class RemoteLoginDataSource internal
-constructor(
+@Inject constructor(
     private val apiService: ApiService,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : CommonDataSource {

@@ -10,7 +10,6 @@ import retrofit2.Response
 private const val TAG = "xxxDefaultRepository"
 
 class DefaultRepository (
-    private val local: CommonDataSource,
     private val remote: CommonDataSource,
     private val apiHelper: ApiHelper,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO

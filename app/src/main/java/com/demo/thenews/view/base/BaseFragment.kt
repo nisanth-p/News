@@ -1,18 +1,16 @@
 package com.demo.thenews.view.base
 
-import android.content.ContextWrapper
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.addCallback
 import androidx.annotation.LayoutRes
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.ViewModel
-import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
@@ -22,11 +20,10 @@ import com.demo.thenews.R
 import com.demo.thenews.model.util.BasicFunction
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
-import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 
-abstract class BaseFragment<VB:ViewBinding> : Fragment() {
+abstract class BaseFragment<VB : ViewBinding> : Fragment() {
+
 
     lateinit var list: Any
     val sharedModel: BaseViewModel by activityViewModels()
@@ -38,19 +35,17 @@ abstract class BaseFragment<VB:ViewBinding> : Fragment() {
     val FRAGMENT_VALUE = "FRAGMENT_VALUE"
     private var _binding: ViewBinding? = null
 
-    @Inject
-    lateinit var localeUpdatedContext: ContextWrapper
 
     @Suppress("UNCHECKED_CAST")
-    protected val binding:VB
-    get() = _binding as VB ?: throw IllegalStateException("Cannot access view in after view destroyed and before view creation")
+    protected val binding: VB
+        get() = _binding as VB
 
     abstract fun setup()
 
     @LayoutRes
     abstract fun layoutRes(): Int
 
-    abstract val bindingInflater :(LayoutInflater, ViewGroup?, Boolean) -> VB
+    abstract val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> VB
 
 
     override fun onCreateView(
@@ -67,6 +62,7 @@ abstract class BaseFragment<VB:ViewBinding> : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setup()
     }
+
     fun nav(id: Int, bundle: Bundle = Bundle.EMPTY) = findNavController().navigate(id, bundle)
     private fun findNavControl() =
         (requireActivity() as NavigationHost).findNavControl()
@@ -96,6 +92,37 @@ abstract class BaseFragment<VB:ViewBinding> : Fragment() {
         action(this)
     }
 
+    override fun onResume() {
+        super.onResume()
+        setupBackPressed()
+    }
+
+    protected open fun setupBackPressed() {
+        val dispatcher = requireActivity().onBackPressedDispatcher
+        dispatcher.addCallback(viewLifecycleOwner) {
+            isEnabled = false
+            findNavControl()?.run {
+                when (currentDestination?.id) {
+                    R.id.signInFragment -> {
+                        showWhatsNewDialog(this@addCallback)
+                        }
+                    else -> {
+                        remove()
+                        onBackPressed()
+                    }
+                }
+            }
+
+        }
+
+
+    }
+
+    fun onBackPressed() {
+        if (!navController.popBackStack()) {
+            activity?.finish()
+        }    }
+
     private fun showWhatsNewDialog(onBackPressedCallback: OnBackPressedCallback) {
         MaterialAlertDialogBuilder(requireContext(), R.style.AlertDialog)
             .setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.bg_dialog))
@@ -107,7 +134,7 @@ abstract class BaseFragment<VB:ViewBinding> : Fragment() {
                 activity?.finish()
             }
             .setNegativeButton(R.string.textCancel) { _, _ ->
-                nav(BasicFunction.getScreens()["add_rooms_to_add_rooms"] as Int)
+                nav(BasicFunction.getScreens()["signin_to_signin"] as Int)
 
             }
             .show()
@@ -115,7 +142,7 @@ abstract class BaseFragment<VB:ViewBinding> : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding=null
+        _binding = null
     }
 }
 
