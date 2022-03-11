@@ -38,7 +38,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() , NavigationHost {
             isEnabled = false
             findNavControl()?.run {
                 when (currentDestination?.id) {
-                    R.id.signInFragment -> {
+                    R.id.signInFragment,R.id.homeFragment  -> {
                         showWhatsNewDialog(onBackPressedCallback = this@addCallback)
                     }
                     else -> {

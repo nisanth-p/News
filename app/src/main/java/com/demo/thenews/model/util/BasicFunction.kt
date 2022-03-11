@@ -42,6 +42,11 @@ class BasicFunction @Inject constructor(context: Context?) {
         function(res)
         return res
     }
+    fun removeSymbol(strings: String, function: (String) -> Unit): String {
+        val remove = "[^A-Za-z0-9 ]".toRegex()
+        val str = remove.replace(strings, "")
+        function(str)
+        return str }
 
     object Fun {
         fun spiltContainsComma(
@@ -62,13 +67,15 @@ class BasicFunction @Inject constructor(context: Context?) {
 
             scr["splash_to_signin"] = R.id.action_splashFragment_to_signInFragment
             scr["signin_to_signin"] = R.id.action_signInFragment_self
+            scr["signin_to_home"] = R.id.action_signInFragment_to_homeFragment
+            scr["home_to_signin"] = R.id.action_homeFragment_to_signInFragment
            /* scr["splash_to_select_screen"] = R.id.action_splashFragment_to_selectScreenFragment
             scr["splash_to_add_rooms"] = R.id.action_splashFragment_to_addRoomFragment
             scr["select_screen_to_signin"] = R.id.action_selectScreenFragment_to_signInFragment
             scr["select_screen_to_signup"] = R.id.action_selectScreenFragment_to_signUpFragment
 
 
-            scr["signin_to_add_rooms"] = R.id.action_signInFragment_to_addRoomFragment
+
             scr["signin_to_select_screen"] = R.id.action_signInFragment_to_selectScreenFragment
             scr["signin_to_otp_screen"] = R.id.action_signInFragment_to_otpFragment
 

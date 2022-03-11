@@ -167,27 +167,27 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/tv_signin"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:theme="@style/vizitin_plus_button_style"
+
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:layout_margin="8dp"
                 android:gravity="center"
                 android:textAllCaps="false"
-                android:textColor="@color/purple_700"
+                android:textColor="@color/white"
                 android:textSize="22sp"
                 android:elevation="2dp"
-                app:strokeColor="@color/purple_500"
+
                 app:strokeWidth="2dp"
                 tools:text="SignIn"
                 android:text="@string/signin"
-                android:backgroundTint="@color/purple_200"
+                android:backgroundTint="@color/purple_700"
                 app:rippleColor="@color/background_gray"
                 app:shapeAppearance="?attr/shapeAppearanceMediumComponent"/>
             <com.google.android.gms.common.SignInButton
                 android:id="@+id/sign_in_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/yellow_1"
+                android:background="@color/purple_500"
                 android:layout_margin="8dp"/>
             <TextView
                 android:id="@+id/tv_forget_password"

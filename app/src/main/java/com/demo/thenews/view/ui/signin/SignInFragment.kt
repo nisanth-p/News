@@ -40,6 +40,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
+import timber.log.Timber
 import kotlin.coroutines.CoroutineContext
 import kotlin.properties.Delegates
 
@@ -73,7 +74,6 @@ class SignInFragment : BaseFragment<FragmentSigninBinding>(), CoroutineScope,
     private val GOOGLE_SIGN_IN = 1998
     override fun setup() {
         _viewBinding = binding
-
         viewModel.init {
             when (it) {
                 TypeOfData.INT -> {
@@ -95,7 +95,6 @@ class SignInFragment : BaseFragment<FragmentSigninBinding>(), CoroutineScope,
         // Configure Google Sign In
         googleSignInOption()
         _viewBinding!!.tvSignin.setOnClickListener {
-            Log.d(TAG, "onClickListeners: nextScreenId =$nextScreenId")
 
             globalLaunch = GlobalScope.launch(Dispatchers.Main) {
                 launch {
@@ -114,10 +113,10 @@ class SignInFragment : BaseFragment<FragmentSigninBinding>(), CoroutineScope,
 
                         _viewBinding!!.TILEmail.error = null
                         _viewBinding!!.TILPassword.error = null
-                        /*   viewModel.postLogin(
+                           viewModel.postLogin(
                                user_email = mapSigninData[ReqMapKey.mail]!!,
                                user_password = mapSigninData[ReqMapKey.password]!!
-                           )*/
+                           )
 
                     }
                     if (mapSigninData[ReqMapKey.mail].isNullOrEmpty()) {
@@ -195,7 +194,8 @@ class SignInFragment : BaseFragment<FragmentSigninBinding>(), CoroutineScope,
                    sharedModel.sharedPref.put(SharedPrefKey.APP_USERMAIL,email as String)
                    sharedModel.sharedPref.put(SharedPrefKey.APP_USERNAME,name as String)
                    sharedModel.sharedPref.put(SharedPrefKey.APP_USERID, idToken)
-                    //nav()
+
+                    nav(BasicFunction.getScreens()["signin_to_home"] as Int)
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w(TAG, "signInWithCredential:failure", task.exception)
@@ -217,9 +217,9 @@ class SignInFragment : BaseFragment<FragmentSigninBinding>(), CoroutineScope,
 
     override fun onStart() {
         super.onStart()
-        if (GoogleSignIn.getLastSignedInAccount(requireActivity()) != null) {
-            // nav()
-        }
+       /* if (GoogleSignIn.getLastSignedInAccount(requireActivity()) != null) {
+            nav(BasicFunction.getScreens()["signin_to_home"] as Int)
+        }*/
     }
     private fun signOut() {
         Firebase.auth.signOut()
@@ -231,7 +231,7 @@ class SignInFragment : BaseFragment<FragmentSigninBinding>(), CoroutineScope,
             _viewBinding!!.TIEPassword.setText("45rt45")
         }
 
-        viewModel.loading_.observe(viewLifecycleOwner) {
+/*        viewModel.loading_.observe(viewLifecycleOwner) {
             MainScope().launch(Dispatchers.Main) {
                 if (it) {
                     _viewBinding!!.lazyLoad.visibility = View.VISIBLE
@@ -239,12 +239,12 @@ class SignInFragment : BaseFragment<FragmentSigninBinding>(), CoroutineScope,
                     _viewBinding!!.lazyLoad.visibility = View.GONE
                 }
             }
-        }
+        }*/
 
         /**
          * Register Data Res Observer
          */
-        viewModel.res.observe(this) {
+        viewModel.resFire.observe(this) {
             _viewBinding!!.lazyLoad.visibility = View.GONE
             _viewBinding!!.IMBackArrow.visibility = View.VISIBLE
             _viewBinding!!.tvForgetPassword.visibility = View.VISIBLE
@@ -254,45 +254,8 @@ class SignInFragment : BaseFragment<FragmentSigninBinding>(), CoroutineScope,
             when (it.status) {
                 Status.SUCCESS -> {
                     it.data.let { res ->
-                        if (res?.success == true) {
-                            _viewBinding!!.FLParentLayout.showSnackbar(
-                                _viewBinding!!.FLParentLayout,
-                                res.message!!,
-                                Snackbar.LENGTH_SHORT,
-                                "SUCCESS", {
-                                    res.data?.filter { dataItem ->
-                                        dataItem?.userAdminid?.let { userid ->
-                                            if (!userid.isEmpty()) {
-                                            }
-                                        }
-                                        dataItem?.userPhone?.let { userphone ->
-                                            if (!userphone.isEmpty()) {
-                                            }
-                                        }
-
-                                        true
-                                    }
-                                    nav(nextScreenId)
-                                }
-                            ) {
-
-                                Log.i(TAG, "bindViews: click toast")
-                            }
-
-                        } else {
-                            if (res != null) {
-                                _viewBinding!!.FLParentLayout.showSnackbar(
-                                    _viewBinding!!.FLParentLayout,
-                                    res.message!!,
-                                    Snackbar.LENGTH_SHORT,
-                                    "FAILED", {
-
-                                    }
-                                ) {
-                                    Log.i(TAG, "bindViews: click toast")
-                                }
-                            }
-                        }
+                        Log.d(TAG, "bindViews: $res")
+                        nav(BasicFunction.getScreens()["signin_to_home"] as Int)
                     }
                 }
                 Status.LOADING -> {
@@ -529,7 +492,7 @@ class SignInFragment : BaseFragment<FragmentSigninBinding>(), CoroutineScope,
     }
 
     override fun onConnectionFailed(p0: ConnectionResult) {
-        TODO("Not yet implemented")
+        Timber.d("onConnectionFailed: ")
     }
 
 }

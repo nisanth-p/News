@@ -1,31 +1,39 @@
 package com.demo.thenews.view.ui.signin
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.demo.thenews.model.data.appscript.AppScriptResponse
+import com.demo.thenews.model.data.firebasemodel.User
 import com.demo.thenews.model.db.remote.firebase.firestore.FireStoreImpl
+import com.demo.thenews.model.db.remote.firebase.realtimedatabase.FireRealTimeDBImpl
 import com.demo.thenews.model.db.repository.CommonRepository
 import com.demo.thenews.model.util.NetworkHelper
 import com.demo.thenews.model.util.PostmanQueryParams
+import com.demo.thenews.model.util.SharedPrefKey
 import com.demo.thenews.model.util.impl.IPref
 import com.demo.thenews.model.util.responsehelper.Resource
 import com.demo.thenews.view.base.BaseViewModel
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.demo.thenews.view.ui.splash.TypeOfData
+import com.google.firebase.database.DatabaseReference
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.lang.Exception
 import javax.inject.Inject
 
 private const val TAG = "xxxSignInViewModel"
+@DelicateCoroutinesApi
 @HiltViewModel
 class SignInViewModel @Inject constructor(private val savedStateHandle: SavedStateHandle,
                                           private val commonRepository: CommonRepository,
-                                          private val networkHelper: NetworkHelper
+                                          private val networkHelper: NetworkHelper,
+                                          var fireRealTimeDBImpl: FireRealTimeDBImpl
 ) : BaseViewModel(networkHelper) {
 
     private var list = mutableListOf<Any?>()
@@ -38,6 +46,8 @@ class SignInViewModel @Inject constructor(private val savedStateHandle: SavedSta
 
     @Inject
      lateinit var fireStoreImpl: FireStoreImpl
+    @Inject
+    lateinit var databaseReference: DatabaseReference
     fun init(function: (TypeOfData) -> Unit) {
         viewModelScope.launch {
 
@@ -46,7 +56,6 @@ class SignInViewModel @Inject constructor(private val savedStateHandle: SavedSta
     }
 
     suspend fun postLogin(user_id:String="",user_name:String="",user_email:String="",user_phone:String="",user_password:String=""){
-
         map[PostmanQueryParams.QUERY_KEY_ACTION_RUN] = PostmanQueryParams.QUERY_VALUE_POST
         map[PostmanQueryParams.QUERY_KEY_ACTION] = PostmanQueryParams.QUERY_VALUE_ACTION_LOGIN
         map[PostmanQueryParams.QUERY_KEY_DEVICE_ID] = user_id
@@ -54,22 +63,39 @@ class SignInViewModel @Inject constructor(private val savedStateHandle: SavedSta
         map[PostmanQueryParams.QUERY_KEY_PHONE] = user_phone
         map[PostmanQueryParams.QUERY_KEY_MAIL] = user_email
         map[PostmanQueryParams.QUERY_KEY_PASSWORD] = user_password
+        map[PostmanQueryParams.QUERY_KEY_DEVICE_NAME] = basicFunction.removeWhiteSpace(user_name +'@'+ getPhoneDeviceName()) { }.toString()
         viewModelScope.launch(Dispatchers.IO) {
-            _res.postValue(Resource.loading(null))
-            try {
-                commonRepository.postLogin(map).let {
-                    if (it.isSuccessful){
-                        _res.postValue(Resource.success(it.body()))
-                    }else{
-                        _res.postValue(Resource.error(it.errorBody().toString(), null))
-                    }
+            _resFire.postValue(Resource.loading(null))
+            val childMap = HashMap<String, Any>()
+            childMap["app"] = "app"
+            childMap["child2"] = "users"
+            childMap["child3"] = "login"
+            childMap["child4"] = basicFunction.removeSymbol(user_email) { }
+            Log.d(TAG, "postLogin: ${ basicFunction.removeSymbol(user_email) { }}")
+            val user=User(user_name,user_email, user_password )
+            val userList: ArrayList<User> = ArrayList()
+            userList.add(user)
+            // TODO: 10-03-2022 Save RealTimeDatabase
+            fireRealTimeDBImpl.writeNewDeviceConfigureWithTaskListeners(
+                childMap = childMap,
+                childList = userList,
+                type = "1"
+            ) { result, code ->
+                try {
+                if (code == 200){
+                    _resFire.postValue(Resource.success(result) as Resource<String>?)
+                }else{
+                    _resFire.postValue(Resource.error(result as String,null))
                 }
-            }catch (ex: Exception){
-                _res.postValue(Resource.error(ex.message.toString(), null))
+                viewModelScope.launch(Dispatchers.IO) {
+                    Log.d(TAG, "configureDevice: save Firebase RTDB = >$result")
+                }
+                }catch (ex: Exception){
+                    _resFire.postValue(Resource.error(ex.message.toString(), null))
 
+                }
             }
         }
-
     }
 
     suspend fun postSendOtp(user_email:String="",user_phone:String=""){
@@ -94,6 +120,7 @@ class SignInViewModel @Inject constructor(private val savedStateHandle: SavedSta
 
             }
         }
+
     }
     /**Field text*/
     private var tv_title: MutableLiveData<String> = MutableLiveData()
@@ -149,9 +176,11 @@ class SignInViewModel @Inject constructor(private val savedStateHandle: SavedSta
     /** Remote Response */
 
     private val _res = MutableLiveData<Resource<AppScriptResponse>>()
-
     val res : LiveData<Resource<AppScriptResponse>>
         get() = _res
+    private val _resFire = MutableLiveData<Resource<String>>()
+    val resFire : LiveData<Resource<String>>
+        get() = _resFire
 
     private val _otp_res = MutableLiveData<Resource<AppScriptResponse>>()
 

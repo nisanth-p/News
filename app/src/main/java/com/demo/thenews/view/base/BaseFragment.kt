@@ -103,7 +103,7 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
             isEnabled = false
             findNavControl()?.run {
                 when (currentDestination?.id) {
-                    R.id.signInFragment -> {
+                    R.id.signInFragment,R.id.homeFragment -> {
                         showWhatsNewDialog(this@addCallback)
                         }
                     else -> {
@@ -112,9 +112,7 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
                     }
                 }
             }
-
         }
-
 
     }
 

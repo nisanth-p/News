@@ -73,14 +73,14 @@ object SelectedRooms{
     const val roomSelected ="roomSelected"
     const val deviceSelected ="deviceSelected"
 
-    // TODO: 21-12-2021 rooms adapter
+    // TODO: 10-3-2022 rooms adapter
     const val deviceName ="deviceName"
     const val deviceItem = "DeviceItem"
     const val roomsItem = "RoomsItem"
     const val selected = "Selected"
     const val selectedItem = "SelectedItem"
 
-    // TODO: 21-12-2021 switch status
+    // TODO: 10-3-2022 switch status
     const val deviceSwitchOneIsOn ="deviceSwitchOneIsOn"
     const val deviceSwitchTwoIsOn = "deviceSwitchTwoIsOn"
     const val deviceSwitchThreeIsOn = "deviceSwitchThreeIsOn"
@@ -91,7 +91,9 @@ object UrlConstants{
     const val BASE_APPSCRIPT_URL = "https://script.google.com/"
     const val BASE_NEWS_URL = "https://newsapi.org/"
     private const val NEWS_API_KEY = "apiKey=4d7f32fcdaa440c8957002be5a281290"
-    const val QUERY_API = "v2/everything?q=bitcoin&$NEWS_API_KEY"
+    const val QUERY_NEWS_API = "v2/everything?q=bitcoin&$NEWS_API_KEY"
+    private const val APPSCRIPT_DEPLOY_KEY = "AKfycbzLbRV9Ng3Z9u-5YGuyaksLX69b9pQnkwv1KBFELwackwMaicko-xyFwF2_YGJ30707"
+    const val QUERY_API = "macros/s/${APPSCRIPT_DEPLOY_KEY}/exec"
 }
  object PostmanQueryParams{
 
