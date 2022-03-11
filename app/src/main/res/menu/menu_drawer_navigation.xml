@@ -4,8 +4,8 @@
 
     <item
         android:id="@+id/profileFragment"
-        android:icon="@drawable/ic_baseline_person_24"
-        android:title="@string/profile" />
+        android:icon="@drawable/ic_baseline_bookmark_24"
+        android:title="@string/bookmark_news" />
 
 
     <item

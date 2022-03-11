@@ -14,5 +14,6 @@
     <string name="client_secret">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</string>
     <string name="web_client_id">854297730634-h1pe4tdj57c4ju0m7cqiob5lanmv5e89.apps.googleusercontent.com</string>
     <string name="profile">profile</string>
+    <string name="bookmark_news">bookmark news</string>
 
 </resources>
